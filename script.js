@@ -4,7 +4,7 @@
 
 const config = {
   herName: "ရင်ဝေ",
-  myName: "My Name",
+  myName: "Your Virual Travel Mate",
 
   // Use a simple label unique to the link you send her.
   // It does NOT need to contain her real name.
