@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fff7f4" />
+  <meta name="description" content="A tiny romantic investigation." />
+  <title>One Tiny Investigation ❤️</title>
+
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page-glow page-glow-one" aria-hidden="true"></div>
+  <div class="page-glow page-glow-two" aria-hidden="true"></div>
+
+  <div class="heart-particles" id="heartParticles" aria-hidden="true"></div>
+
+  <button
+    class="music-toggle"
+    id="musicToggle"
+    type="button"
+    aria-pressed="false"
+    aria-label="Turn background music on"
+  >
+    <span class="music-icon">♫</span>
+    <span class="music-label">Music</span>
+  </button>
+
+  <main class="app-shell">
+    <section class="card" id="card" aria-live="polite">
+      <div class="progress-wrap hidden" id="progressWrap">
+        <div class="progress-text" id="progressText">❤️ ○ ○ ○ ○</div>
+        <div class="progress-track" aria-hidden="true">
+          <span class="progress-fill" id="progressFill"></span>
+        </div>
+      </div>
+
+      <div id="screen"></div>
+    </section>
+
+    <p class="privacy-note">
+      Just for fun. Your answers stay in this browser and are not sent anywhere.
+    </p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
