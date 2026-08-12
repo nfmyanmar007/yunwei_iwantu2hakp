@@ -1,4 +1,15 @@
-const ALLOWED_EVENTS = new Set(["page_opened", "message_revealed"]);
+const ALLOWED_EVENTS = new Set([
+  "page_opened",
+  "message_revealed",
+  "response_sent"
+]);
+
+const ALLOWED_REACTIONS = new Set([
+  "still_hurt",
+  "need_time",
+  "forgive",
+  "read_take_care"
+]);
 
 function clean(value, max = 80) {
   return String(value || "")
@@ -20,9 +31,23 @@ module.exports = async function handler(req, res) {
 
   const linkId = clean(req.body?.linkId || "apology-01");
   const eventType = clean(req.body?.eventType || "");
+  const reaction = clean(req.body?.reaction || "");
 
   if (!linkId || !ALLOWED_EVENTS.has(eventType)) {
     return res.status(400).json({ ok: false });
+  }
+
+  if (eventType === "response_sent" && !ALLOWED_REACTIONS.has(reaction)) {
+    return res.status(400).json({ ok: false });
+  }
+
+  const payload = {
+    link_id: linkId,
+    event_type: eventType
+  };
+
+  if (eventType === "response_sent") {
+    payload.reaction = reaction;
   }
 
   try {
@@ -34,10 +59,7 @@ module.exports = async function handler(req, res) {
         "Content-Type": "application/json",
         "Prefer": "return=minimal"
       },
-      body: JSON.stringify({
-        link_id: linkId,
-        event_type: eventType
-      })
+      body: JSON.stringify(payload)
     });
 
     if (!response.ok) {

@@ -4,7 +4,7 @@
 
 const config = {
   herName: "ရင်ဝေ",
-  myName: "Your Virtual Travel Mate",
+  myName: "My Name",
 
   // Use a simple label unique to the link you send her.
   // It does NOT need to contain her real name.
@@ -13,19 +13,19 @@ const config = {
   // Set false if you do not want any visit receipt at all.
   enableAnonymousVisitReceipt: true,
 
-  title: "ကိုယ် တောင်းပန်ပါတယ်",
+  title: "တောင်းပန်ချင်တဲ့ စကား",
   introEyebrow: "A message I should have said properly",
   introText:
-    " ရင်ဝေကို ဒီစာကို ဖတ်စေချင်တာပါ။ ပြန်ဖြေရမယ်လို့ မမျှော်လင့်ပါဘူး။",
+    "ကိုယ် ဒီစာကို တစ်ခါတည်းပဲ ရိုးရိုးသားသား ပြောချင်တာပါ။ ပြန်ဖြေရမယ်လို့ မမျှော်လင့်ပါဘူး။",
 
   paragraphs: [
-    "ရင်ဝေကို စိတ်မသက်မသာဖြစ်စေချင်လို့ မဟုတ်ပါဘူး။ ကိုယ် တောင်းပန်ချင် လို့ပါ။",
+    "ရင်ဝေကို စိတ်မသက်မသာဖြစ်စေချင်လို့ မဟုတ်ပါဘူး။ ကိုယ် အရင်က သေချာပြောသင့်ခဲ့တဲ့ စကားတချို့ကို အခုတော့ ရိုးရိုးသားသား ပြောချင်လို့ပါ။",
     "ကိုယ့်ကြောင့် ရင်ဝေ စိတ်ထိခိုက်နာကျင်ခဲ့ရတာအတွက် တကယ်ကို တောင်းပန်ပါတယ်။ ကိုယ့်အတွက် အရေးကြီးခဲ့တဲ့ လူတစ်ယောက်ကို နာကျင်စေမိခဲ့တာကို အခုထိ နောင်တရနေမိတယ်။",
     "တောင်းပန်လိုက်ရုံနဲ့ ရင်ဝေက ကိုယ့်ကို ခွင့်လွှတ်ပေးရမယ်လို့ ကိုယ် မမျှော်လင့်ပါဘူး။ ဖြစ်ပြီးသွားတဲ့အရာတွေကိုလည်း ပြန်ပြင်လို့မရတော့ဘူးဆိုတာ နားလည်ပါတယ်။ ဒါပေမယ့် ဖြစ်ခဲ့သမျှအတွက် ကိုယ် ဘယ်လောက်နောင်တရနေတယ်ဆိုတာတော့ ရိုးရိုးသားသား ပြောချင်တယ်။",
     "ရင်ဝေဆီက အဖြေတစ်ခုခု ပြန်ရဖို့ ကိုယ် မမျှော်လင့်ပါဘူး။ ရင်ဝေ ဘယ်တော့မှ မပြန်ဖြေရင်တောင် ကိုယ် ပြောသင့်တဲ့ တောင်းပန်စကားကို သေချာပြောထားချင်ခဲ့တာပါ။",
-    "ကိုယ်တို့ အတူရှိခဲ့တဲ့အချိန်တွေထဲက ကောင်းမွန်တဲ့ အမှတ်တရတွေကိုလည်း ကိုယ် တန်ဖိုးထားပါတယ်။ ရင်ဝေ အမြဲတမ်း ပျော်ရွှင်မှုကို ရရှိပါစေလို့လည်း တကယ်ဆုတောင်းပေးပါတယ်။",
+    "ကိုယ်တို့ အတူရှိခဲ့တဲ့အချိန်တွေထဲက ကောင်းမွန်တဲ့ အမှတ်တရတွေကိုလည်း ကိုယ် တန်ဖိုးထားပါတယ်။ ရင်ဝေနဲ့ထိုက်တန်တဲ့ ပျော်ရွှင်မှုကို ရရှိပါစေလို့လည်း တကယ်ဆုတောင်းပေးပါတယ်။",
     "ရင်ဝေ ကြိုးစားနေတဲ့အရာတိုင်းမှာ အောင်မြင်ပါစေ။ ဘဝက ရင်ဝေကို ဘယ်နေရာကိုပဲ ခေါ်ဆောင်သွားပါစေ၊ အဲဒီလမ်းမှာ ပျော်ရွှင်မှုနဲ့ စိတ်အေးချမ်းမှုတွေ အများကြီး ရရှိပါစေ။",
-    "ကိုယ် နောက်ထပ်အခွင့်အရေးတစ်ခုကို မမျှော်လင့်ပါဘူး။ ကိုယ့်ကြောင့် ရင်ဝေ နာကျင်ခဲ့ရတာကို  “တောင်းပန်ပါတယ်” လို့ သေချာပြောချင်တာပါ။",
+    "ကိုယ် နောက်ထပ်အခွင့်အရေးတစ်ခုကို မမျှော်လင့်ပါဘူး။ ကိုယ့်ကြောင့် ရင်ဝေ နာကျင်ခဲ့ရတာကို အသိအမှတ်ပြုပြီး “တောင်းပန်ပါတယ်” လို့ သေချာပြောချင်တာပါ။",
     "ပျော်ရွှင်ပါစေ။ အောင်မြင်ပါစေ။ ကိုယ့်ကိုယ်ကို ကောင်းကောင်းဂရုစိုက်ပါ။ ❤️",
     "ရင်ဝေ ပြန်ဖြေဖို့ မလိုပါဘူး။ ကိုယ် တကယ်တောင်းပန်ပါတယ်ဆိုတာ ရင်ဝေ သိစေချင်ရုံပါပဲ။"
   ]
@@ -46,8 +46,13 @@ const progressText = document.getElementById("progressText");
 const progressFill = document.getElementById("progressFill");
 const nextButton = document.getElementById("nextButton");
 const backButton = document.getElementById("backButton");
+const reactionSection = document.getElementById("reactionSection");
+const reactionGrid = document.getElementById("reactionGrid");
+const sendResponseButton = document.getElementById("sendResponseButton");
+const reactionStatus = document.getElementById("reactionStatus");
 
 let currentStep = 0;
+let selectedReaction = null;
 
 function hasRealValue(value, placeholder) {
   return value && value.trim() && value.trim().toLowerCase() !== placeholder.toLowerCase();
@@ -104,6 +109,11 @@ nextButton.addEventListener("click", () => {
     nextButton.textContent = "Done";
     nextButton.disabled = true;
     nextButton.style.opacity = "0.72";
+
+    reactionSection.hidden = false;
+    window.setTimeout(() => {
+      reactionSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 120);
   }
 });
 
@@ -115,11 +125,65 @@ backButton.addEventListener("click", () => {
   }
 });
 
+
+/* =========================================================
+   OPTIONAL RESPONSE
+   Nothing is sent until she explicitly presses Send my response.
+   ========================================================= */
+
+reactionGrid.querySelectorAll(".reaction-button").forEach((button) => {
+  button.addEventListener("click", () => {
+    reactionGrid.querySelectorAll(".reaction-button").forEach((item) => {
+      item.classList.remove("selected");
+    });
+
+    button.classList.add("selected");
+    selectedReaction = button.dataset.reaction;
+    sendResponseButton.disabled = false;
+    reactionStatus.textContent = "Your choice has not been sent yet.";
+  });
+});
+
+sendResponseButton.addEventListener("click", async () => {
+  if (!selectedReaction) return;
+
+  sendResponseButton.disabled = true;
+  reactionStatus.textContent = "Sending...";
+
+  try {
+    const response = await fetch("/api/visit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        linkId: String(config.linkId || "apology-01").slice(0, 80),
+        eventType: "response_sent",
+        reaction: selectedReaction
+      }),
+      keepalive: true
+    });
+
+    if (!response.ok && response.status !== 204) {
+      throw new Error("Could not send");
+    }
+
+    reactionStatus.textContent = "Your response was sent. Thank you for being honest.";
+    reactionGrid.querySelectorAll(".reaction-button").forEach((item) => {
+      item.disabled = true;
+    });
+  } catch (_) {
+    reactionStatus.textContent = "Your response could not be sent. Nothing was saved.";
+    sendResponseButton.disabled = false;
+  }
+});
+
 /* =========================================================
    TRANSPARENT, MINIMAL VISIT RECEIPT
    Stores only:
    - linkId
    - event type
+   - optional reaction, only after "Send my response"
    - server timestamp
 
    It does NOT intentionally send/store:

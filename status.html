@@ -85,11 +85,28 @@
         const openedTime = data.lastOpenedAt ? new Date(data.lastOpenedAt).toLocaleString() : "—";
         const revealedTime = data.lastRevealedAt ? new Date(data.lastRevealedAt).toLocaleString() : "—";
 
+        const reactionLabels = {
+          still_hurt: "I'm still hurt",
+          need_time: "I need more time",
+          forgive: "I forgive you",
+          read_take_care: "I read this. Take care."
+        };
+
+        const responseText = data.responseReceived
+          ? (reactionLabels[data.latestReaction] || data.latestReaction)
+          : "No response sent";
+
+        const responseTime = data.latestReactionAt
+          ? new Date(data.latestReactionAt).toLocaleString()
+          : "—";
+
         result.innerHTML = `
           <div><span class="yes">Link opened:</span> ${opened}</div>
           <div><span class="yes">Message revealed:</span> ${revealed}</div>
           <div><span class="yes">Last opened:</span> ${openedTime}</div>
           <div><span class="yes">Last revealed:</span> ${revealedTime}</div>
+          <div style="margin-top:12px"><span class="yes">Her response:</span> ${responseText}</div>
+          <div><span class="yes">Response time:</span> ${responseTime}</div>
         `;
       } catch (_) {
         result.textContent = "Could not check status.";

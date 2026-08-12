@@ -27,7 +27,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const params = new URLSearchParams({
-      "select": "event_type,created_at",
+      "select": "event_type,reaction,created_at",
       "link_id": `eq.${linkId}`,
       "order": "created_at.desc",
       "limit": "100"
@@ -50,6 +50,7 @@ module.exports = async function handler(req, res) {
     const rows = await response.json();
     const pageOpened = rows.filter(r => r.event_type === "page_opened");
     const messageRevealed = rows.filter(r => r.event_type === "message_revealed");
+    const responses = rows.filter(r => r.event_type === "response_sent");
 
     return res.status(200).json({
       ok: true,
@@ -59,7 +60,10 @@ module.exports = async function handler(req, res) {
       openCount: pageOpened.length,
       revealCount: messageRevealed.length,
       lastOpenedAt: pageOpened[0]?.created_at || null,
-      lastRevealedAt: messageRevealed[0]?.created_at || null
+      lastRevealedAt: messageRevealed[0]?.created_at || null,
+      responseReceived: responses.length > 0,
+      latestReaction: responses[0]?.reaction || null,
+      latestReactionAt: responses[0]?.created_at || null
     });
   } catch (_) {
     return res.status(500).json({ ok: false, error: "Could not read status." });

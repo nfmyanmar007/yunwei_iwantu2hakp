@@ -62,6 +62,38 @@
         </div>
 
         <div class="signature" id="signature"></div>
+
+        <div id="reactionSection" class="reaction-section" hidden>
+          <div class="reaction-divider"></div>
+
+          <p class="reaction-eyebrow">Only if you want to</p>
+          <h3>How do you feel after reading this?</h3>
+          <p class="reaction-note">
+            You don't have to choose anything. If you do choose, your response stays on this page
+            until you press <strong>Send my response</strong>.
+          </p>
+
+          <div class="reaction-grid" id="reactionGrid">
+            <button class="reaction-button" type="button" data-reaction="still_hurt">
+              I'm still hurt
+            </button>
+            <button class="reaction-button" type="button" data-reaction="need_time">
+              I need more time
+            </button>
+            <button class="reaction-button" type="button" data-reaction="forgive">
+              I forgive you
+            </button>
+            <button class="reaction-button" type="button" data-reaction="read_take_care">
+              I read this. Take care.
+            </button>
+          </div>
+
+          <button class="send-response-button" id="sendResponseButton" type="button" disabled>
+            Send my response
+          </button>
+
+          <p class="reaction-status" id="reactionStatus" aria-live="polite"></p>
+        </div>
       </div>
     </section>
 
