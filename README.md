@@ -2,20 +2,28 @@
 
 A quiet, mobile-first apology page with optional anonymous visit receipt.
 
+## New behavior
+
+The message is now shown **one paragraph at a time**.
+She must press **Next** to continue to the next paragraph.
+
 ## Personalize
 
 Edit the top of `script.js`:
 
 ```js
 const config = {
-  herName: "Her Name",
+  herName: "ရင်ဝေ",
   myName: "My Name",
   linkId: "apology-01",
-  enableAnonymousVisitReceipt: true
+  enableAnonymousVisitReceipt: true,
+  title: "တောင်းပန်ချင်တဲ့ စကား",
+  paragraphs: [
+    "First paragraph...",
+    "Second paragraph..."
+  ]
 };
 ```
-
-Use a `linkId` that does not contain her name or personal information.
 
 ## Privacy
 

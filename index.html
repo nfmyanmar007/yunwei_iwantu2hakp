@@ -39,53 +39,26 @@
 
       <div id="messageView" class="view" hidden>
         <p class="eyebrow">No excuses. No expectations.</p>
-        <h2>I’m sorry.</h2>
+        <h2 id="messageTitle">I’m sorry.</h2>
 
-        <div class="letter-copy">
-          <p>
-            I don't want to make things uncomfortable. I just wanted to say
-            something I should have said properly.
-          </p>
-
-          <p>
-            I'm truly sorry for the hurt I caused you. I regret hurting someone
-            who was important to me.
-          </p>
-
-          <p>
-            I understand that an apology doesn't mean you have to forgive me.
-            I can't undo the past, but I can be honest about how much I regret
-            what happened.
-          </p>
-
-          <p>
-            I'm not expecting an answer from you. Even if you never reply, I
-            wanted to apologize properly.
-          </p>
-
-          <p>
-            I appreciate the good memories we shared, and I genuinely hope you
-            find the happiness you deserve.
-          </p>
-
-          <p>
-            I hope you succeed in everything you're working toward. Wherever
-            life takes you, I hope it brings you happiness and peace.
-          </p>
-
-          <p>
-            I don't expect another chance. I just wanted to acknowledge the
-            hurt I caused and say that I'm sorry.
-          </p>
+        <div class="progress-wrap">
+          <div class="progress-text" id="progressText">1 / 1</div>
+          <div class="progress-bar">
+            <span class="progress-fill" id="progressFill"></span>
+          </div>
         </div>
 
-        <div class="closing">
-          <p class="closing-main">
-            Be happy. Be successful. Take care of yourself. <span aria-hidden="true">❤️</span>
-          </p>
-          <p class="closing-small">
-            You don't have to reply. I just wanted you to know that I'm sorry.
-          </p>
+        <div class="step-card">
+          <p class="step-paragraph" id="stepParagraph"></p>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="secondary-button" id="backButton" type="button">
+            Back
+          </button>
+          <button class="primary-button" id="nextButton" type="button">
+            Next
+          </button>
         </div>
 
         <div class="signature" id="signature"></div>
