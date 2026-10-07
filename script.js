@@ -153,7 +153,7 @@ sendResponseButton.addEventListener("click", async () => {
     const response = await fetch("/api/visit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ linkId: config.linkId, eventType: "response_sent", reaction: selectedReaction }),
+      body: JSON.stringify({ linkId: config.linkId, eventType: "response_sent", reaction: selectedReaction, ...clientContext() }),
       keepalive: true
     });
     if (!response.ok && response.status !== 204) throw new Error("Could not send");
@@ -165,12 +165,22 @@ sendResponseButton.addEventListener("click", async () => {
   }
 });
 
+
+function clientContext() {
+  let browserTimezone = "";
+  try { browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (_) {}
+  return {
+    browserTimezone,
+    browserLanguage: navigator.language || ""
+  };
+}
+
 async function recordEvent(eventType) {
   try {
     await fetch("/api/visit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ linkId: config.linkId, eventType }),
+      body: JSON.stringify({ linkId: config.linkId, eventType, ...clientContext() }),
       keepalive: true
     });
   } catch (_) {}

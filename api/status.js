@@ -2,10 +2,14 @@ function clean(value, max = 80) {
   return String(value || "").replace(/[^a-zA-Z0-9._-]/g, "").slice(0, max);
 }
 
-async function readRows(url, key, linkId, withLocation) {
-  const fields = withLocation
-    ? "event_type,reaction,created_at,city,region,country"
-    : "event_type,reaction,created_at";
+async function readRows(url, key, linkId, mode) {
+  let fields = "event_type,reaction,created_at";
+  if (mode === "full") {
+    fields += ",city,region,country,postal_code,latitude,longitude,ip_timezone,browser_timezone,browser_language";
+  } else if (mode === "basic") {
+    fields += ",city,region,country";
+  }
+
   const params = new URLSearchParams({
     select: fields,
     link_id: `eq.${linkId}`,
@@ -34,16 +38,24 @@ module.exports = async function handler(req, res) {
   const linkId = clean(req.query?.linkId || "oct28-birthday-01");
 
   try {
-    let response = await readRows(supabaseUrl, serviceRoleKey, linkId, true);
-    let hasLocationColumns = response.ok;
-    if (!response.ok) response = await readRows(supabaseUrl, serviceRoleKey, linkId, false);
+    let mode = "full";
+    let response = await readRows(supabaseUrl, serviceRoleKey, linkId, mode);
+
+    if (!response.ok) {
+      mode = "basic";
+      response = await readRows(supabaseUrl, serviceRoleKey, linkId, mode);
+    }
+    if (!response.ok) {
+      mode = "minimal";
+      response = await readRows(supabaseUrl, serviceRoleKey, linkId, mode);
+    }
     if (!response.ok) return res.status(500).json({ ok: false, error: "Could not read status." });
 
     const rows = await response.json();
     const opens = rows.filter(r => r.event_type === "page_opened");
     const reveals = rows.filter(r => r.event_type === "message_revealed");
     const responses = rows.filter(r => r.event_type === "response_sent");
-    const latestLocatedOpen = opens.find(r => r.city || r.region || r.country) || null;
+    const latestLocatedOpen = opens.find(r => r.city || r.region || r.country || r.postal_code || r.latitude || r.longitude) || null;
 
     return res.status(200).json({
       ok: true,
@@ -57,10 +69,16 @@ module.exports = async function handler(req, res) {
       responseReceived: responses.length > 0,
       latestReaction: responses[0]?.reaction || null,
       latestReactionAt: responses[0]?.created_at || null,
-      locationEnabled: hasLocationColumns,
+      locationMode: mode,
       city: latestLocatedOpen?.city || null,
       region: latestLocatedOpen?.region || null,
-      country: latestLocatedOpen?.country || null
+      country: latestLocatedOpen?.country || null,
+      postalCode: latestLocatedOpen?.postal_code || null,
+      latitude: latestLocatedOpen?.latitude ?? null,
+      longitude: latestLocatedOpen?.longitude ?? null,
+      ipTimezone: latestLocatedOpen?.ip_timezone || null,
+      browserTimezone: latestLocatedOpen?.browser_timezone || null,
+      browserLanguage: latestLocatedOpen?.browser_language || null
     });
   } catch (_) {
     return res.status(500).json({ ok: false, error: "Could not read status." });
