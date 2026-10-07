@@ -37,8 +37,10 @@ const reactionStatus = document.getElementById("reactionStatus");
 const confetti = document.getElementById("confetti");
 const locationModal = document.getElementById("locationModal");
 const shareLocationButton = document.getElementById("shareLocationButton");
+const shareCityButton = document.getElementById("shareCityButton");
 const skipLocationButton = document.getElementById("skipLocationButton");
 const locationStatus = document.getElementById("locationStatus");
+const messageBox = document.getElementById("messageBox");
 
 let currentStep = 0;
 let selectedReaction = null;
@@ -130,8 +132,20 @@ readButton.addEventListener("click", showLocationChoice);
 skipLocationButton.addEventListener("click", async () => {
   if (!pendingOpen) return;
   pendingOpen = false;
-  if (config.enableVisitReceipt) await recordEvent("location_declined");
+  if (config.enableVisitReceipt) await recordEvent("location_skipped");
   openBirthdayMessage();
+});
+
+shareCityButton.addEventListener("click", async () => {
+  if (!pendingOpen) return;
+  shareLocationButton.disabled = true;
+  shareCityButton.disabled = true;
+  skipLocationButton.disabled = true;
+  locationStatus.textContent = "Sharing your approximate city…";
+  if (config.enableVisitReceipt) await recordEvent("location_city_shared");
+  locationStatus.textContent = "City shared. Thank you ❤️";
+  pendingOpen = false;
+  setTimeout(openBirthdayMessage, 450);
 });
 
 shareLocationButton.addEventListener("click", () => {
@@ -143,6 +157,7 @@ shareLocationButton.addEventListener("click", () => {
   }
 
   shareLocationButton.disabled = true;
+  shareCityButton.disabled = true;
   skipLocationButton.disabled = true;
   locationStatus.textContent = "Waiting for your browser permission…";
 
@@ -207,10 +222,11 @@ sendResponseButton.addEventListener("click", async () => {
   sendResponseButton.disabled = true;
   reactionStatus.textContent = "Sending...";
   try {
+    const message = messageBox.value.trim().slice(0, 500);
     const response = await fetch("/api/visit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ linkId: config.linkId, eventType: "response_sent", reaction: selectedReaction, ...clientContext() }),
+      body: JSON.stringify({ linkId: config.linkId, eventType: "response_sent", reaction: selectedReaction, message, ...clientContext() }),
       keepalive: true
     });
     const data = await response.json().catch(() => ({}));

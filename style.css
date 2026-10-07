@@ -61,6 +61,9 @@ h3 { font-size:1.55rem; }
 .reaction-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:18px; }
 .reaction-button { padding:10px; }
 .reaction-button.selected { border-color:var(--gold); background:rgba(247,216,137,.12); }
+.message-label { display:block; margin-top:18px; color:#d8c9d9; font-family:Arial,sans-serif; font-size:.82rem; font-weight:700; text-align:left; }
+.message-box { width:100%; margin-top:8px; padding:12px 14px; border:1px solid rgba(255,255,255,.14); border-radius:16px; background:rgba(255,255,255,.06); color:#fff; font:inherit; font-family:Arial,sans-serif; font-size:.92rem; resize:vertical; }
+.message-box:focus { outline:2px solid var(--gold); outline-offset:2px; }
 .send-response-button { width:100%; margin-top:14px; padding:12px 20px; }
 .send-response-button:disabled { opacity:.45; cursor:not-allowed; transform:none; }
 .reaction-status { min-height:20px; color:#d8c9d9; font-family:Arial,sans-serif; font-size:.82rem; }

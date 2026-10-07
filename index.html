@@ -66,6 +66,8 @@
             <button class="reaction-button" type="button" data-reaction="yes_smile">Yes ❤️</button>
             <button class="reaction-button" type="button" data-reaction="of_course">Of course 😄</button>
           </div>
+          <label class="message-label" for="messageBox">Want to say anything back? (optional)</label>
+          <textarea id="messageBox" class="message-box" maxlength="500" rows="3" placeholder="Write a reply if you'd like..."></textarea>
           <button class="send-response-button" id="sendResponseButton" type="button" disabled>
             Send my answer
           </button>
@@ -75,7 +77,7 @@
     </section>
 
     <p class="privacy-note">
-      This page records basic visit analytics. If you choose <strong>Share location</strong>, your browser may also share your device location with the sender after asking for permission. You can continue without sharing it.
+      This page records basic visit analytics, such as when it was opened. It never looks up your location on its own. The dialog below is the only place this page ever asks about your location, and every option there is entirely your choice.
     </p>
   </main>
 
@@ -83,9 +85,10 @@
     <div class="location-dialog" role="dialog" aria-modal="true" aria-labelledby="locationTitle">
       <div class="location-icon" aria-hidden="true">📍</div>
       <h2 id="locationTitle">Share your location?</h2>
-      <p>This birthday page can share your current device location with the sender. Your browser will ask for permission first. You can continue without sharing.</p>
-      <button id="shareLocationButton" class="primary-button location-choice" type="button">Share location</button>
-      <button id="skipLocationButton" class="secondary-button location-choice" type="button">Continue without sharing</button>
+      <p>You can share your exact device location, just your approximate city, or nothing at all. Nothing is collected unless you pick one of the share options below.</p>
+      <button id="shareLocationButton" class="primary-button location-choice" type="button">Share exact location</button>
+      <button id="shareCityButton" class="secondary-button location-choice" type="button">Share my city only</button>
+      <button id="skipLocationButton" class="secondary-button location-choice" type="button">Don't share location</button>
       <p id="locationStatus" class="location-status" aria-live="polite"></p>
     </div>
   </div>

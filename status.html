@@ -5,50 +5,54 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Birthday Link Status</title>
   <style>
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;font-family:Arial,sans-serif;color:#eee;background:#100d20}.card{width:min(100%,600px);padding:28px;border-radius:24px;background:#201a34;box-shadow:0 22px 60px rgba(0,0,0,.3)}h1{margin-top:0;font-family:Georgia,serif;font-weight:500}.muted{color:#bfb4c8;font-size:.82rem;line-height:1.5}label{display:block;margin:16px 0 7px;font-size:.84rem;font-weight:700}input{width:100%;min-height:46px;border:1px solid #463c5c;border-radius:12px;padding:10px 12px;font:inherit;color:#fff;background:#151125}button{width:100%;min-height:48px;margin-top:16px;border:0;border-radius:999px;background:linear-gradient(135deg,#ffd990,#ff96b9);color:#241628;font-weight:800;cursor:pointer}.result{margin-top:20px;padding:17px;border-radius:16px;background:#171229;line-height:1.7;display:none}.key{font-weight:800;color:#ffd990}.warn{margin-top:12px;color:#ffcf8c;font-size:.82rem;line-height:1.5}.good{margin-top:12px;color:#b9f7c7;font-size:.82rem;line-height:1.5}.divider{height:1px;background:#32284a;margin:14px 0}.small{font-size:.82rem;color:#cfc5da}.coords{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.source{font-size:.74rem;color:#a99eb8;margin-left:4px}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;font-family:Arial,sans-serif;color:#eee;background:#100d20}.card{width:min(100%,600px);padding:28px;border-radius:24px;background:#201a34;box-shadow:0 22px 60px rgba(0,0,0,.3)}h1{margin-top:0;font-family:Georgia,serif;font-weight:500}.muted{color:#bfb4c8;font-size:.82rem;line-height:1.5}label{display:block;margin:16px 0 7px;font-size:.84rem;font-weight:700}input{width:100%;min-height:46px;border:1px solid #463c5c;border-radius:12px;padding:10px 12px;font:inherit;color:#fff;background:#151125}button{width:100%;min-height:48px;margin-top:16px;border:0;border-radius:999px;background:linear-gradient(135deg,#ffd990,#ff96b9);color:#241628;font-weight:800;cursor:pointer}.result{margin-top:20px;padding:17px;border-radius:16px;background:#171229;line-height:1.7;display:none}.key{font-weight:800;color:#ffd990}.warn{margin-top:12px;color:#ffcf8c;font-size:.82rem;line-height:1.5}.good{margin-top:12px;color:#b9f7c7;font-size:.82rem;line-height:1.5}.divider{height:1px;background:#32284a;margin:14px 0}.small{font-size:.82rem;color:#cfc5da}.coords{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.msg{white-space:pre-wrap;background:#151125;border-radius:12px;padding:10px 12px;margin-top:6px}
   </style>
 </head>
 <body>
   <main class="card">
     <h1>Birthday link status 🎂</h1>
-    <p class="muted">Private analytics for your October 28 link. If the visitor explicitly allows browser location access, this page can show the device coordinates and browser-reported accuracy. Otherwise, only approximate IP/network location is available.</p>
+    <p class="muted">Private dashboard for your October 28 link. This only ever shows data the visitor actively chose to share — exact location, approximate city, or a written reply. Nothing is collected without her picking one of those options.</p>
     <label for="linkId">Link ID</label>
     <input id="linkId" value="oct28-birthday-01" />
     <label for="secret">Status secret</label>
-    <input id="secret" type="password" autocomplete="current-password" />
+    <input id="secret" type="password" autocomplete="off" />
     <button id="checkBtn">Check status</button>
+    <p class="muted" style="margin-top:10px">The secret is only kept in this tab's memory and is cleared on reload — it is not saved to this browser.</p>
     <div id="result" class="result"></div>
   </main>
   <script>
     const btn=document.getElementById('checkBtn');const result=document.getElementById('result');
     const esc=(v)=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
-    btn.addEventListener('click',async()=>{result.style.display='block';result.textContent='Checking...';try{const linkId=encodeURIComponent(document.getElementById('linkId').value.trim());const secret=document.getElementById('secret').value;const response=await fetch(`/api/status?linkId=${linkId}`,{headers:{'x-status-secret':secret}});const data=await response.json();if(!response.ok||!data.ok){result.textContent=data.error||'Could not check status.';return}const reactionLabels={yes_smile:'Yes ❤️',of_course:'Of course 😄'};const location=[data.city,data.region,data.country].filter(Boolean).join(', ')||'Not available';const vercelLocation=[data.vercelCity,data.vercelRegion,data.vercelCountry].filter(Boolean).join(', ')||'Not available';const coords=(data.latitude!==null&&data.longitude!==null)?`${data.latitude}, ${data.longitude}`:'Not available';const sourceLabel=data.geoSource==='secondary_ip'?'secondary IP provider':data.geoSource==='vercel_ip'?'Vercel IP':'IP geolocation';const disagree=data.vercelCity&&data.city&&String(data.vercelCity).toLowerCase()!==String(data.city).toLowerCase();result.innerHTML=`
+    btn.addEventListener('click',async()=>{
+      result.style.display='block';result.textContent='Checking...';
+      try{
+        const linkId=encodeURIComponent(document.getElementById('linkId').value.trim());
+        const secret=document.getElementById('secret').value;
+        const response=await fetch(`/api/status?linkId=${linkId}`,{headers:{'x-status-secret':secret}});
+        const data=await response.json();
+        if(!response.ok||!data.ok){result.textContent=data.error||'Could not check status.';return}
+        const reactionLabels={yes_smile:'Yes ❤️',of_course:'Of course 😄',still_hurt:'Still hurt',need_time:'Needs time'};
+        const permissionLabels={granted_gps:'Shared exact location',granted_city:'Shared city only',skipped:'Chose not to share',denied:'Browser permission denied',unavailable:'Location unavailable',timeout:'Request timed out'};
+        const coords=(data.gpsLatitude!==null&&data.gpsLongitude!==null)?`${data.gpsLatitude}, ${data.gpsLongitude}`:null;
+        const city=[data.city,data.region,data.country].filter(Boolean).join(', ');
+        result.innerHTML=`
       <div><span class="key">Link opened:</span> ${data.opened?'Yes':'Not yet'}</div>
       <div><span class="key">Open count:</span> ${data.openCount}</div>
       <div><span class="key">Birthday wish opened:</span> ${data.messageRevealed?'Yes':'Not yet'}</div>
       <div><span class="key">Last opened:</span> ${data.lastOpenedAt?esc(new Date(data.lastOpenedAt).toLocaleString()):'—'}</div>
       <div class="divider"></div>
-      <div><span class="key">Precise location permission:</span> ${esc(data.locationPermission||'Not requested / no result')}</div>
-      <div><span class="key">GPS/device coordinates:</span> <span class="coords">${data.gpsLatitude!==null&&data.gpsLongitude!==null?`${esc(data.gpsLatitude)}, ${esc(data.gpsLongitude)}`:'Not shared'}</span></div>
-      <div><span class="key">Browser-reported accuracy:</span> ${data.gpsAccuracy!==null?`±${esc(Math.round(data.gpsAccuracy))} meters`:'—'}</div>
-      <div><span class="key">GPS captured:</span> ${data.gpsCapturedAt?esc(new Date(data.gpsCapturedAt).toLocaleString()):'—'}</div>
-      ${data.gpsLatitude!==null&&data.gpsLongitude!==null?`<div><a href="https://www.google.com/maps?q=${encodeURIComponent(data.gpsLatitude+','+data.gpsLongitude)}" target="_blank" rel="noopener" style="color:#ffd990">Open coordinates in Google Maps</a></div>`:''}
-      <div class="small">Device coordinates are only stored after the visitor chooses Share location and then allows the browser permission request.</div>
-      <div class="divider"></div>
-      <div><span class="key">IP/network estimate:</span> ${esc(location)} <span class="source">(${esc(sourceLabel)})</span></div>
-      ${data.vercelCity?`<div><span class="key">Vercel estimate:</span> ${esc(vercelLocation)}</div>`:''}
-      <div><span class="key">Postal estimate:</span> ${esc(data.postalCode||'Not available')}</div>
-      <div><span class="key">IP coordinates:</span> <span class="coords">${esc(coords)}</span></div>
-      <div><span class="key">IP timezone:</span> ${esc(data.ipTimezone||'Not available')}</div>
-      <div><span class="key">Browser timezone:</span> ${esc(data.browserTimezone||'Not available')}</div>
-      <div><span class="key">Network/ISP:</span> ${esc(data.networkOrg||'Not available')}</div>
-      <div><span class="key">Browser language:</span> ${esc(data.browserLanguage||'Not available')}</div>
-      ${disagree?'<div class="warn">⚠️ The two IP databases disagree about the city. Treat the city as uncertain; exact device location would require browser location permission.</div>':'<div class="small">IP location is approximate and may represent an ISP/network location rather than the visitor’s physical city.</div>'}
+      <div><span class="key">Location choice:</span> ${esc(permissionLabels[data.locationPermission]||'Not chosen yet')}</div>
+      ${coords?`<div><span class="key">Exact coordinates:</span> <span class="coords">${esc(coords)}</span></div><div><span class="key">Accuracy:</span> ${data.gpsAccuracy!==null?`±${esc(Math.round(data.gpsAccuracy))} meters`:'—'}</div><div><a href="https://www.google.com/maps?q=${encodeURIComponent(data.gpsLatitude+','+data.gpsLongitude)}" target="_blank" rel="noopener" style="color:#ffd990">Open in Google Maps</a></div>`:''}
+      ${city?`<div><span class="key">Approximate city:</span> ${esc(city)}</div>`:''}
+      ${!coords&&!city?'<div class="small">No location shared.</div>':''}
       <div class="divider"></div>
       <div><span class="key">Her answer:</span> ${data.responseReceived?esc(reactionLabels[data.latestReaction]||data.latestReaction):'No answer sent'}</div>
-      <div><span class="key">Answer count:</span> ${data.responseCount||0}</div>
       <div><span class="key">Answer time:</span> ${data.latestReactionAt?esc(new Date(data.latestReactionAt).toLocaleString()):'—'}</div>
-      ${data.locationMode==='full'?'<div class="good">Version 4 tracking columns are enabled.</div>':data.locationMode==='v2'?'<div class="warn">Run the Version 4 SQL in README.md to enable precise-location permission fields.</div>':data.locationMode==='basic'?'<div class="warn">Only basic location columns are available. Run the latest SQL in README.md.</div>':'<div class="warn">Location columns are not enabled in Supabase. Run the SQL in README.md.</div>'}`;}catch(_){result.textContent='Could not check status.'}});
+      ${data.message?`<div><span class="key">Her message:</span><div class="msg">${esc(data.message)}</div></div>`:''}
+      <div class="divider"></div>
+      ${data.locationMode==='full'?'<div class="good">All status columns are enabled.</div>':'<div class="warn">Run the SQL in README.md to enable full status columns.</div>'}`;
+      }catch(_){result.textContent='Could not check status.'}
+    });
   </script>
 </body>
 </html>
