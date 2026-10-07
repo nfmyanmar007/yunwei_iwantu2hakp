@@ -5,6 +5,8 @@ function clean(value, max = 80) {
 async function readRows(url, key, linkId, mode) {
   let fields = "event_type,reaction,created_at";
   if (mode === "full") {
+    fields += ",city,region,country,postal_code,latitude,longitude,ip_timezone,browser_timezone,browser_language,geo_source,network_org,vercel_city,vercel_region,vercel_country";
+  } else if (mode === "v2") {
     fields += ",city,region,country,postal_code,latitude,longitude,ip_timezone,browser_timezone,browser_language";
   } else if (mode === "basic") {
     fields += ",city,region,country";
@@ -40,15 +42,9 @@ module.exports = async function handler(req, res) {
   try {
     let mode = "full";
     let response = await readRows(supabaseUrl, serviceRoleKey, linkId, mode);
-
-    if (!response.ok) {
-      mode = "basic";
-      response = await readRows(supabaseUrl, serviceRoleKey, linkId, mode);
-    }
-    if (!response.ok) {
-      mode = "minimal";
-      response = await readRows(supabaseUrl, serviceRoleKey, linkId, mode);
-    }
+    if (!response.ok) { mode = "v2"; response = await readRows(supabaseUrl, serviceRoleKey, linkId, mode); }
+    if (!response.ok) { mode = "basic"; response = await readRows(supabaseUrl, serviceRoleKey, linkId, mode); }
+    if (!response.ok) { mode = "minimal"; response = await readRows(supabaseUrl, serviceRoleKey, linkId, mode); }
     if (!response.ok) return res.status(500).json({ ok: false, error: "Could not read status." });
 
     const rows = await response.json();
@@ -67,6 +63,7 @@ module.exports = async function handler(req, res) {
       lastOpenedAt: opens[0]?.created_at || null,
       lastRevealedAt: reveals[0]?.created_at || null,
       responseReceived: responses.length > 0,
+      responseCount: responses.length,
       latestReaction: responses[0]?.reaction || null,
       latestReactionAt: responses[0]?.created_at || null,
       locationMode: mode,
@@ -78,7 +75,12 @@ module.exports = async function handler(req, res) {
       longitude: latestLocatedOpen?.longitude ?? null,
       ipTimezone: latestLocatedOpen?.ip_timezone || null,
       browserTimezone: latestLocatedOpen?.browser_timezone || null,
-      browserLanguage: latestLocatedOpen?.browser_language || null
+      browserLanguage: latestLocatedOpen?.browser_language || null,
+      geoSource: latestLocatedOpen?.geo_source || null,
+      networkOrg: latestLocatedOpen?.network_org || null,
+      vercelCity: latestLocatedOpen?.vercel_city || null,
+      vercelRegion: latestLocatedOpen?.vercel_region || null,
+      vercelCountry: latestLocatedOpen?.vercel_country || null
     });
   } catch (_) {
     return res.status(500).json({ ok: false, error: "Could not read status." });

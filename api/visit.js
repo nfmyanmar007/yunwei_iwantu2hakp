@@ -14,7 +14,7 @@ function numberOrNull(value, min, max) {
   return Number.isFinite(n) && n >= min && n <= max ? n : null;
 }
 
-function passiveGeo(req) {
+function vercelGeo(req) {
   return {
     city: clean(decodeHeader(req.headers["x-vercel-ip-city"]), 100) || null,
     region: clean(req.headers["x-vercel-ip-country-region"], 100) || null,
@@ -26,8 +26,53 @@ function passiveGeo(req) {
   };
 }
 
+function clientIp(req) {
+  const raw = String(req.headers["x-forwarded-for"] || req.headers["x-real-ip"] || "");
+  const first = raw.split(",")[0].trim();
+  // We do not store the IP. It is used only for the secondary approximate lookup.
+  if (!first || first.length > 64 || !/^[0-9a-fA-F:.]+$/.test(first)) return null;
+  return first;
+}
+
+async function secondaryGeo(req) {
+  const ip = clientIp(req);
+  if (!ip) return null;
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 1800);
+    const response = await fetch(`https://ipapi.co/${encodeURIComponent(ip)}/json/`, {
+      headers: { "User-Agent": "October28BirthdayLink/1.0" },
+      signal: controller.signal
+    });
+    clearTimeout(timer);
+    if (!response.ok) return null;
+    const data = await response.json();
+    if (data?.error) return null;
+    const result = {
+      city: clean(data.city, 100) || null,
+      region: clean(data.region_code || data.region, 100) || null,
+      country: clean(data.country_code || data.country, 20) || null,
+      postal_code: clean(data.postal, 30) || null,
+      latitude: numberOrNull(data.latitude, -90, 90),
+      longitude: numberOrNull(data.longitude, -180, 180),
+      ip_timezone: clean(data.timezone, 100) || null,
+      network_org: clean(data.org, 160) || null
+    };
+    return result.city || result.region || result.country ? result : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function chooseBest(vercel, secondary) {
+  // A second provider can improve some ISP mappings, but is still IP-based.
+  // Prefer it when it returns a usable city; otherwise use Vercel.
+  if (secondary?.city) return { ...secondary, geo_source: "secondary_ip" };
+  return { ...vercel, network_org: null, geo_source: "vercel_ip" };
+}
+
 async function insertRow(supabaseUrl, key, payload) {
-  return fetch(`${supabaseUrl}/rest/v1/apology_visits`, {
+  const response = await fetch(`${supabaseUrl}/rest/v1/apology_visits`, {
     method: "POST",
     headers: {
       apikey: key,
@@ -37,14 +82,18 @@ async function insertRow(supabaseUrl, key, payload) {
     },
     body: JSON.stringify(payload)
   });
+  const detail = response.ok ? "" : await response.text().catch(() => "");
+  return { ok: response.ok, status: response.status, detail };
 }
 
 module.exports = async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ ok: false });
+  if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
 
   const supabaseUrl = process.env.SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !serviceRoleKey) return res.status(204).end();
+  if (!supabaseUrl || !serviceRoleKey) {
+    return res.status(503).json({ ok: false, error: "Tracking is not configured." });
+  }
 
   const linkId = clean(req.body?.linkId || "oct28-birthday-01", 80).replace(/ /g, "");
   const eventType = clean(req.body?.eventType || "", 40).replace(/ /g, "");
@@ -52,44 +101,89 @@ module.exports = async function handler(req, res) {
   const browserTimezone = clean(req.body?.browserTimezone || "", 100) || null;
   const browserLanguage = clean(req.body?.browserLanguage || "", 40) || null;
 
-  if (!linkId || !ALLOWED_EVENTS.has(eventType)) return res.status(400).json({ ok: false });
-  if (eventType === "response_sent" && !ALLOWED_REACTIONS.has(reaction)) return res.status(400).json({ ok: false });
+  if (!linkId || !ALLOWED_EVENTS.has(eventType)) return res.status(400).json({ ok: false, error: "Invalid event." });
+  if (eventType === "response_sent" && !ALLOWED_REACTIONS.has(reaction)) {
+    return res.status(400).json({ ok: false, error: "Invalid reaction." });
+  }
 
-  const payload = {
+  const vg = vercelGeo(req);
+  const sg = eventType === "page_opened" ? await secondaryGeo(req) : null;
+  const best = chooseBest(vg, sg);
+
+  const fullPayload = {
     link_id: linkId,
     event_type: eventType,
-    ...passiveGeo(req),
+    city: best.city,
+    region: best.region,
+    country: best.country,
+    postal_code: best.postal_code,
+    latitude: best.latitude,
+    longitude: best.longitude,
+    ip_timezone: best.ip_timezone,
     browser_timezone: browserTimezone,
-    browser_language: browserLanguage
+    browser_language: browserLanguage,
+    geo_source: best.geo_source,
+    network_org: best.network_org || null,
+    vercel_city: vg.city,
+    vercel_region: vg.region,
+    vercel_country: vg.country
   };
-  if (eventType === "response_sent") payload.reaction = reaction;
+  if (eventType === "response_sent") fullPayload.reaction = reaction;
 
   try {
-    let response = await insertRow(supabaseUrl, serviceRoleKey, payload);
+    let result = await insertRow(supabaseUrl, serviceRoleKey, fullPayload);
 
-    // Compatibility fallback for databases that only have the original
-    // city/region/country columns.
-    if (!response.ok) {
-      const basicLocation = {
+    // Compatibility with the previous v2 schema.
+    if (!result.ok) {
+      const v2Payload = {
         link_id: linkId,
         event_type: eventType,
-        city: payload.city,
-        region: payload.region,
-        country: payload.country
+        city: best.city,
+        region: best.region,
+        country: best.country,
+        postal_code: best.postal_code,
+        latitude: best.latitude,
+        longitude: best.longitude,
+        ip_timezone: best.ip_timezone,
+        browser_timezone: browserTimezone,
+        browser_language: browserLanguage
       };
-      if (eventType === "response_sent") basicLocation.reaction = reaction;
-      response = await insertRow(supabaseUrl, serviceRoleKey, basicLocation);
+      if (eventType === "response_sent") v2Payload.reaction = reaction;
+      result = await insertRow(supabaseUrl, serviceRoleKey, v2Payload);
     }
 
-    // Final fallback: never break visit logging if location columns are absent.
-    if (!response.ok) {
+    // Compatibility with the first birthday schema.
+    if (!result.ok) {
+      const basic = {
+        link_id: linkId,
+        event_type: eventType,
+        city: best.city,
+        region: best.region,
+        country: best.country
+      };
+      if (eventType === "response_sent") basic.reaction = reaction;
+      result = await insertRow(supabaseUrl, serviceRoleKey, basic);
+    }
+
+    // Minimal fallback. For a response, keep reaction because silently dropping it
+    // would make the UI claim an answer was saved when it was not.
+    if (!result.ok) {
       const minimal = { link_id: linkId, event_type: eventType };
       if (eventType === "response_sent") minimal.reaction = reaction;
-      await insertRow(supabaseUrl, serviceRoleKey, minimal);
+      result = await insertRow(supabaseUrl, serviceRoleKey, minimal);
     }
 
-    return res.status(204).end();
+    if (!result.ok) {
+      return res.status(500).json({
+        ok: false,
+        error: eventType === "response_sent"
+          ? "Your answer could not be saved. Please try again."
+          : "Visit analytics could not be saved."
+      });
+    }
+
+    return res.status(200).json({ ok: true, stored: true });
   } catch (_) {
-    return res.status(204).end();
+    return res.status(500).json({ ok: false, error: "Tracking request failed." });
   }
 };

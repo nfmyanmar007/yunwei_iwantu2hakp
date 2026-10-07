@@ -109,7 +109,7 @@ readButton.addEventListener("click", () => {
   currentStep = 0;
   renderStep();
   launchConfetti();
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  // Keep the reader at the current visual position instead of jumping to the top.
   if (config.enableVisitReceipt) recordEvent("message_revealed");
 });
 
@@ -117,7 +117,6 @@ nextButton.addEventListener("click", () => {
   if (currentStep < config.paragraphs.length - 1) {
     currentStep += 1;
     renderStep();
-    window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
   nextButton.disabled = true;
@@ -131,7 +130,6 @@ backButton.addEventListener("click", () => {
   if (currentStep > 0) {
     currentStep -= 1;
     renderStep();
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 });
 
@@ -156,7 +154,8 @@ sendResponseButton.addEventListener("click", async () => {
       body: JSON.stringify({ linkId: config.linkId, eventType: "response_sent", reaction: selectedReaction, ...clientContext() }),
       keepalive: true
     });
-    if (!response.ok && response.status !== 204) throw new Error("Could not send");
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.ok || !data.stored) throw new Error(data.error || "Could not send");
     reactionStatus.textContent = "Sent ❤️";
     reactionGrid.querySelectorAll(".reaction-button").forEach((item) => { item.disabled = true; });
   } catch (_) {
