@@ -3,49 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#fbf6f2" />
-  <meta name="description" content="A personal message." />
-  <title>A Message I Should Have Said Properly</title>
+  <meta name="theme-color" content="#171329" />
+  <meta name="description" content="A little October 28 birthday surprise." />
+  <title>October 28 ✨</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="ambient ambient-one" aria-hidden="true"></div>
-  <div class="ambient ambient-two" aria-hidden="true"></div>
+  <div class="stars" aria-hidden="true"></div>
+  <div class="glow glow-one" aria-hidden="true"></div>
+  <div class="glow glow-two" aria-hidden="true"></div>
+  <div id="confetti" class="confetti" aria-hidden="true"></div>
 
   <main class="page-shell">
-    <section class="message-card" id="messageCard">
-      <div class="envelope-wrap" aria-hidden="true">
-        <div class="envelope">
-          <div class="envelope-flap"></div>
-          <div class="letter">♡</div>
-          <div class="envelope-front"></div>
-        </div>
-      </div>
+    <section class="birthday-card" id="birthdayCard">
+      <div class="gift-icon" aria-hidden="true">🎁</div>
 
       <div id="introView" class="view active">
-        <p class="eyebrow">A message I should have said properly</p>
-        <h1 id="greeting">Hey...</h1>
-        <p class="intro-copy">
-          I know you may not want to hear from me, and I respect that.
-          I only wanted to say this once, clearly and sincerely.
+        <p class="eyebrow">A little October surprise</p>
+        <h1 id="greeting">For you ✨</h1>
+
+        <div class="countdown-box" aria-live="polite">
+          <div class="countdown-number" id="countdownNumber">—</div>
+          <div class="countdown-label" id="countdownLabel">until October 28</div>
+        </div>
+
+        <p class="intro-copy" id="introCopy">
+          Something special is waiting for you. Open it whenever you're ready.
         </p>
 
         <button class="primary-button" id="readButton" type="button">
-          Read my message
+          Open your birthday surprise 🎁
         </button>
 
-        <p class="no-pressure">No reply is expected.</p>
+        <p class="tiny-note">Made with a little extra thought for October 28.</p>
       </div>
 
       <div id="messageView" class="view" hidden>
-        <p class="eyebrow">No excuses. No expectations.</p>
-        <h2 id="messageTitle">I’m sorry.</h2>
+        <p class="eyebrow" id="messageEyebrow">A birthday wish for you</p>
+        <h2 id="messageTitle">Happy Birthday 🎂</h2>
 
         <div class="progress-wrap">
           <div class="progress-text" id="progressText">1 / 1</div>
-          <div class="progress-bar">
-            <span class="progress-fill" id="progressFill"></span>
-          </div>
+          <div class="progress-bar"><span class="progress-fill" id="progressFill"></span></div>
         </div>
 
         <div class="step-card">
@@ -53,51 +52,31 @@
         </div>
 
         <div class="nav-buttons">
-          <button class="secondary-button" id="backButton" type="button">
-            Back
-          </button>
-          <button class="primary-button" id="nextButton" type="button">
-            Next
-          </button>
+          <button class="secondary-button" id="backButton" type="button">Back</button>
+          <button class="primary-button" id="nextButton" type="button">Next</button>
         </div>
 
         <div class="signature" id="signature"></div>
 
         <div id="reactionSection" class="reaction-section" hidden>
           <div class="reaction-divider"></div>
-
-          <p class="reaction-eyebrow">Only if you want to</p>
-          <h3>How do you feel after reading this?</h3>
-          <p class="reaction-note">
-            You don't have to choose anything. If you do choose, your response stays on this page
-            until you press <strong>Send my response</strong>.
-          </p>
-
+          <p class="reaction-eyebrow">One last tiny question 😊</p>
+          <h3>Did this make you smile?</h3>
           <div class="reaction-grid" id="reactionGrid">
-            <button class="reaction-button" type="button" data-reaction="still_hurt">
-              I'm still hurt
-            </button>
-            <button class="reaction-button" type="button" data-reaction="need_time">
-              I need more time
-            </button>
-            <button class="reaction-button" type="button" data-reaction="forgive">
-              I forgive you
-            </button>
-            <button class="reaction-button" type="button" data-reaction="read_take_care">
-              I read this. Take care.
-            </button>
+            <button class="reaction-button" type="button" data-reaction="yes_smile">Yes ❤️</button>
+            <button class="reaction-button" type="button" data-reaction="of_course">Of course 😄</button>
           </div>
-
           <button class="send-response-button" id="sendResponseButton" type="button" disabled>
-            Send my response
+            Send my answer
           </button>
-
           <p class="reaction-status" id="reactionStatus" aria-live="polite"></p>
         </div>
       </div>
     </section>
 
-    
+    <p class="privacy-note">
+      This page records basic visit analytics, including an approximate city/region when available. It does not request precise GPS location.
+    </p>
   </main>
 
   <script src="script.js"></script>

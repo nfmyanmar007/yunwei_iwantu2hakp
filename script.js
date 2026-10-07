@@ -1,39 +1,19 @@
-/* =========================================================
-   PERSONALIZE THIS SECTION
-   ========================================================= */
-
 const config = {
   herName: "ရင်ဝေ",
   myName: "Your Virtual Travel Mate",
-
-  // Use a simple label unique to the link you send her.
-  // It does NOT need to contain her real name.
-  linkId: "apology-01",
-
-  // Set false if you do not want any visit receipt at all.
-  enableAnonymousVisitReceipt: true,
-
-  title: "ကိုယ် တောင်းပန်ပါတယ်",
-  introEyebrow: "A message I should have said properly",
-  introText:
-    "ကိုယ် ဒီစာကို တစ်ခါတည်းပဲ ရိုးရိုးသားသား ပြောချင်တာပါ။ ပြန်ဖြေရမယ်လို့ မမျှော်လင့်ပါဘူး။",
-
+  linkId: "oct28-birthday-01",
+  birthdayMonth: 10,
+  birthdayDay: 28,
+  enableVisitReceipt: true,
   paragraphs: [
-    "ရင်ဝေကို စိတ်မသက်မသာဖြစ်စေချင်လို့ မဟုတ်ပါဘူး။ ကိုယ် တောင်းပန်ချင် လို့ပါ။",
-    "ကိုယ့်ကြောင့် ရင်ဝေ စိတ်ထိခိုက်နာကျင်ခဲ့ရတာအတွက် တကယ်ကို တောင်းပန်ပါတယ်။ ကိုယ့်အတွက် အရေးကြီးခဲ့တဲ့ လူတစ်ယောက်ကို နာကျင်စေမိခဲ့တာကို အခုထိ နောင်တရနေမိတယ်။",
-    "တောင်းပန်လိုက်ရုံနဲ့ ရင်ဝေက ကိုယ့်ကို ခွင့်လွှတ်ပေးရမယ်လို့ ကိုယ် မမျှော်လင့်ပါဘူး။ ဖြစ်ပြီးသွားတဲ့အရာတွေကိုလည်း ပြန်ပြင်လို့မရတော့ဘူးဆိုတာ နားလည်ပါတယ်။ ဒါပေမယ့် ဖြစ်ခဲ့သမျှအတွက် ကိုယ် ဘယ်လောက်နောင်တရနေတယ်ဆိုတာတော့ ရိုးရိုးသားသား ပြောချင်တယ်။",
-    "ရင်ဝေဆီက အဖြေတစ်ခုခု ပြန်ရဖို့ ကိုယ် မမျှော်လင့်ပါဘူး။ ရင်ဝေ ဘယ်တော့မှ မပြန်ဖြေရင်တောင် ကိုယ် ပြောသင့်တဲ့ တောင်းပန်စကားကို သေချာပြောထားချင်ခဲ့တာပါ။",
-    "ကိုယ်တို့ အတူရှိခဲ့တဲ့အချိန်တွေထဲက ကောင်းမွန်တဲ့ အမှတ်တရတွေကိုလည်း ကိုယ် တန်ဖိုးထားပါတယ်။ ရင်ဝေ အမြဲတမ်း ပျော်ရွှင်မှုကို ရရှိပါစေလို့လည်း တကယ်ဆုတောင်းပေးပါတယ်။",
-    "ရင်ဝေ ကြိုးစားနေတဲ့အရာတိုင်းမှာ အောင်မြင်ပါစေ။ ဘဝက ရင်ဝေကို ဘယ်နေရာကိုပဲ ခေါ်ဆောင်သွားပါစေ၊ အဲဒီလမ်းမှာ ပျော်ရွှင်မှုနဲ့ စိတ်အေးချမ်းမှုတွေ အများကြီး ရရှိပါစေ။",
-    "ကိုယ် နောက်ထပ်အခွင့်အရေးတစ်ခုကို မမျှော်လင့်ပါဘူး။ ကိုယ့်ကြောင့် ရင်ဝေ နာကျင်ခဲ့ရတာကို  “တောင်းပန်ပါတယ်” လို့ သေချာပြောချင်တာပါ။",
-    "ပျော်ရွှင်ပါစေ။ အောင်မြင်ပါစေ။ ကိုယ့်ကိုယ်ကို ကောင်းကောင်းဂရုစိုက်ပါ။ ❤️",
-    "ရင်ဝေ ပြန်ဖြေဖို့ မလိုပါဘူး။ ကိုယ် တကယ်တောင်းပန်ပါတယ်ဆိုတာ ရင်ဝေ သိစေချင်ရုံပါပဲ။"
+    "I wanted to make something small and special for you instead of sending only a normal birthday message. ✨",
+    "October 28 is your day, and I hope it brings you genuine happiness, peaceful moments, and plenty of reasons to smile.",
+    "I hope the year ahead opens good doors for you, brings success to the things you work hard for, and gives you beautiful memories you will want to keep.",
+    "May you always be surrounded by people who appreciate your heart, respect you, and make your days a little brighter.",
+    "Whatever this new chapter brings, I hope you stay strong, keep believing in yourself, and never forget how special you are. ❤️",
+    "Happy Birthday, ရင်ဝေ. I hope October 28 is beautiful from beginning to end. 🎂🎉"
   ]
 };
-
-/* =========================================================
-   PAGE
-   ========================================================= */
 
 const introView = document.getElementById("introView");
 const messageView = document.getElementById("messageView");
@@ -41,6 +21,10 @@ const readButton = document.getElementById("readButton");
 const greeting = document.getElementById("greeting");
 const signature = document.getElementById("signature");
 const messageTitle = document.getElementById("messageTitle");
+const messageEyebrow = document.getElementById("messageEyebrow");
+const introCopy = document.getElementById("introCopy");
+const countdownNumber = document.getElementById("countdownNumber");
+const countdownLabel = document.getElementById("countdownLabel");
 const stepParagraph = document.getElementById("stepParagraph");
 const progressText = document.getElementById("progressText");
 const progressFill = document.getElementById("progressFill");
@@ -50,26 +34,50 @@ const reactionSection = document.getElementById("reactionSection");
 const reactionGrid = document.getElementById("reactionGrid");
 const sendResponseButton = document.getElementById("sendResponseButton");
 const reactionStatus = document.getElementById("reactionStatus");
+const confetti = document.getElementById("confetti");
 
 let currentStep = 0;
 let selectedReaction = null;
 
-function hasRealValue(value, placeholder) {
-  return value && value.trim() && value.trim().toLowerCase() !== placeholder.toLowerCase();
+function calendarDaysUntilBirthday() {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const birthday = new Date(now.getFullYear(), config.birthdayMonth - 1, config.birthdayDay);
+  const dayMs = 24 * 60 * 60 * 1000;
+  return Math.round((birthday - today) / dayMs);
 }
 
-if (hasRealValue(config.herName, "Her Name")) {
-  greeting.textContent = `${config.herName.trim()}...`;
-} else {
-  greeting.textContent = "Hey...";
-}
+function updateCountdown() {
+  const days = calendarDaysUntilBirthday();
+  greeting.textContent = config.herName ? `${config.herName} ✨` : "For you ✨";
 
-if (hasRealValue(config.myName, "My Name")) {
-  signature.textContent = `— ${config.myName.trim()}`;
-}
-
-if (config.title) {
-  messageTitle.textContent = config.title;
+  if (days > 1) {
+    countdownNumber.textContent = days;
+    countdownLabel.textContent = "days until your birthday 🎂";
+    introCopy.textContent = `${days} days to go… Something special is waiting for you on October 28. ❤️`;
+    readButton.textContent = "Open your birthday surprise 🎁";
+    messageTitle.textContent = "A little early birthday wish ✨";
+  } else if (days === 1) {
+    countdownNumber.textContent = "1";
+    countdownLabel.textContent = "day until your birthday 🎂";
+    introCopy.textContent = "Tomorrow is your birthday… so I saved a little surprise for you. ❤️";
+    readButton.textContent = "Open tomorrow's surprise 🎁";
+    messageTitle.textContent = "Almost your birthday ✨";
+  } else if (days === 0) {
+    countdownNumber.textContent = "TODAY 🎉";
+    countdownLabel.textContent = "October 28 — your special day";
+    introCopy.textContent = "The countdown is over. Today is your day. Happy Birthday! 🎂✨";
+    readButton.textContent = "Open your birthday wish 🎁";
+    messageEyebrow.textContent = "October 28 is finally here";
+    messageTitle.textContent = "Happy Birthday! 🎂🎉";
+  } else {
+    const daysAfter = Math.abs(days);
+    countdownNumber.textContent = "❤️";
+    countdownLabel.textContent = "October 28 birthday wish";
+    introCopy.textContent = `Your birthday was ${daysAfter === 1 ? "yesterday" : `${daysAfter} days ago`}, but this little wish is still for you.`;
+    readButton.textContent = "Open your birthday wish 🎁";
+    messageTitle.textContent = "I hope your birthday was beautiful ❤️";
+  }
 }
 
 function renderStep() {
@@ -77,27 +85,32 @@ function renderStep() {
   stepParagraph.textContent = config.paragraphs[currentStep];
   progressText.textContent = `${currentStep + 1} / ${total}`;
   progressFill.style.width = `${((currentStep + 1) / total) * 100}%`;
-
   backButton.disabled = currentStep === 0;
-  backButton.style.opacity = currentStep === 0 ? "0.55" : "1";
-  backButton.style.cursor = currentStep === 0 ? "not-allowed" : "pointer";
-
-  nextButton.textContent = currentStep === total - 1 ? "Finish" : "Next";
+  nextButton.textContent = currentStep === total - 1 ? "Finish ✨" : "Next";
 }
 
-readButton.addEventListener("click", async () => {
-  introView.hidden = true;
-  introView.classList.remove("active");
-  messageView.hidden = false;
-  messageView.classList.add("active");
+function launchConfetti() {
+  confetti.innerHTML = "";
+  const pieces = ["✨", "🎉", "💖", "🎈", "⭐", "🎂"];
+  for (let i = 0; i < 34; i += 1) {
+    const piece = document.createElement("span");
+    piece.textContent = pieces[Math.floor(Math.random() * pieces.length)];
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.animationDelay = `${Math.random() * 0.6}s`;
+    piece.style.animationDuration = `${2.6 + Math.random() * 2}s`;
+    confetti.appendChild(piece);
+  }
+  setTimeout(() => { confetti.innerHTML = ""; }, 5200);
+}
 
+readButton.addEventListener("click", () => {
+  introView.hidden = true;
+  messageView.hidden = false;
   currentStep = 0;
   renderStep();
+  launchConfetti();
   window.scrollTo({ top: 0, behavior: "smooth" });
-
-  if (config.enableAnonymousVisitReceipt) {
-    recordEvent("message_revealed");
-  }
+  if (config.enableVisitReceipt) recordEvent("message_revealed");
 });
 
 nextButton.addEventListener("click", () => {
@@ -105,16 +118,13 @@ nextButton.addEventListener("click", () => {
     currentStep += 1;
     renderStep();
     window.scrollTo({ top: 0, behavior: "smooth" });
-  } else {
-    nextButton.textContent = "Done";
-    nextButton.disabled = true;
-    nextButton.style.opacity = "0.72";
-
-    reactionSection.hidden = false;
-    window.setTimeout(() => {
-      reactionSection.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 120);
+    return;
   }
+  nextButton.disabled = true;
+  nextButton.textContent = "Done ❤️";
+  reactionSection.hidden = false;
+  launchConfetti();
+  setTimeout(() => reactionSection.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
 });
 
 backButton.addEventListener("click", () => {
@@ -125,94 +135,47 @@ backButton.addEventListener("click", () => {
   }
 });
 
-
-/* =========================================================
-   OPTIONAL RESPONSE
-   Nothing is sent until she explicitly presses Send my response.
-   ========================================================= */
-
 reactionGrid.querySelectorAll(".reaction-button").forEach((button) => {
   button.addEventListener("click", () => {
-    reactionGrid.querySelectorAll(".reaction-button").forEach((item) => {
-      item.classList.remove("selected");
-    });
-
+    reactionGrid.querySelectorAll(".reaction-button").forEach((item) => item.classList.remove("selected"));
     button.classList.add("selected");
     selectedReaction = button.dataset.reaction;
     sendResponseButton.disabled = false;
-    reactionStatus.textContent = "Your choice has not been sent yet.";
+    reactionStatus.textContent = "Your answer has not been sent yet.";
   });
 });
 
 sendResponseButton.addEventListener("click", async () => {
   if (!selectedReaction) return;
-
   sendResponseButton.disabled = true;
   reactionStatus.textContent = "Sending...";
-
   try {
     const response = await fetch("/api/visit", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        linkId: String(config.linkId || "apology-01").slice(0, 80),
-        eventType: "response_sent",
-        reaction: selectedReaction
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ linkId: config.linkId, eventType: "response_sent", reaction: selectedReaction }),
       keepalive: true
     });
-
-    if (!response.ok && response.status !== 204) {
-      throw new Error("Could not send");
-    }
-
-    reactionStatus.textContent = "Your response was sent. Thank you for being honest.";
-    reactionGrid.querySelectorAll(".reaction-button").forEach((item) => {
-      item.disabled = true;
-    });
+    if (!response.ok && response.status !== 204) throw new Error("Could not send");
+    reactionStatus.textContent = "Sent ❤️";
+    reactionGrid.querySelectorAll(".reaction-button").forEach((item) => { item.disabled = true; });
   } catch (_) {
-    reactionStatus.textContent = "Your response could not be sent. Nothing was saved.";
+    reactionStatus.textContent = "Could not send. Please try again.";
     sendResponseButton.disabled = false;
   }
 });
-
-/* =========================================================
-   TRANSPARENT, MINIMAL VISIT RECEIPT
-   Stores only:
-   - linkId
-   - event type
-   - optional reaction, only after "Send my response"
-   - server timestamp
-
-   It does NOT intentionally send/store:
-   - IP address
-   - location
-   - device/browser details
-   - contacts
-   - camera/microphone
-   - form answers
-   ========================================================= */
 
 async function recordEvent(eventType) {
   try {
     await fetch("/api/visit", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        linkId: String(config.linkId || "apology-01").slice(0, 80),
-        eventType
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ linkId: config.linkId, eventType }),
       keepalive: true
     });
-  } catch (_) {
-    // The message page still works even if tracking is unavailable.
-  }
+  } catch (_) {}
 }
 
-if (config.enableAnonymousVisitReceipt) {
-  recordEvent("page_opened");
-}
+if (config.myName) signature.textContent = `— ${config.myName}`;
+updateCountdown();
+if (config.enableVisitReceipt) recordEvent("page_opened");

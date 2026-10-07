@@ -1,99 +1,41 @@
-# Apology Message Page
+# October 28 Birthday Surprise
 
-A quiet, mobile-first apology page with optional anonymous visit receipt.
+A small birthday-surprise website with:
 
-## New behavior
+- Dynamic October 28 countdown based on the visitor's local calendar date
+- Special messages for the day before, birthday day, and after the birthday
+- Animated birthday reveal and confetti
+- Optional smile response
+- Private status page (`/status.html`)
+- Approximate city/region/country analytics from Vercel request headers (no GPS permission request)
 
-The message is now shown **one paragraph at a time**.
-She must press **Next** to continue to the next paragraph.
+## Existing Vercel environment variables
 
-## Personalize
+Keep these configured:
 
-Edit the top of `script.js`:
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `STATUS_SECRET`
 
-```js
-const config = {
-  herName: "ရင်ဝေ",
-  myName: "My Name",
-  linkId: "apology-01",
-  enableAnonymousVisitReceipt: true,
-  title: "တောင်းပန်ချင်တဲ့ စကား",
-  paragraphs: [
-    "First paragraph...",
-    "Second paragraph..."
-  ]
-};
+## Supabase location columns
+
+The project continues to save visits even if you do not run this migration, but approximate location will not be stored until these columns exist.
+
+Run this once in the Supabase SQL Editor:
+
+```sql
+alter table public.apology_visits
+  add column if not exists city text,
+  add column if not exists region text,
+  add column if not exists country text;
 ```
 
-## Privacy
+The project deliberately does **not** save precise GPS coordinates. Location comes from Vercel's coarse request geolocation headers and can be wrong because of VPNs, mobile carrier routing, proxies, or IP geolocation limitations.
 
-When tracking is enabled, the application code stores only:
+## Link ID
 
-- `link_id`
-- `event_type` (`page_opened` or `message_revealed`)
-- server timestamp
+The new default link ID is:
 
-The application code does not intentionally store IP address, location, browser/device details, contacts, camera/microphone data, or form answers.
+`oct28-birthday-01`
 
-The page visibly discloses that an anonymous open/reveal receipt may be recorded.
-
-## Vercel + Supabase tracking setup
-
-1. Create a Supabase project, or use an existing project.
-2. Run `supabase-setup.sql` in Supabase SQL Editor.
-3. Deploy this folder to Vercel.
-4. In Vercel → Project → Settings → Environment Variables, add:
-
-   - `SUPABASE_URL`
-   - `SUPABASE_SERVICE_ROLE_KEY`
-   - `STATUS_SECRET`
-
-5. Redeploy after adding environment variables.
-
-Important: `SUPABASE_SERVICE_ROLE_KEY` is server-side only. Never put it in `script.js`.
-
-## Check whether the link was opened
-
-Visit:
-
-`https://YOUR-DOMAIN.vercel.app/status.html`
-
-Enter:
-
-- the same `linkId` from `script.js`
-- your `STATUS_SECRET`
-
-It will show whether:
-- the page was opened
-- the "Read my message" button was pressed
-
-## No tracking option
-
-Set:
-
-```js
-enableAnonymousVisitReceipt: false
-```
-
-The apology page will still work normally.
-
-## Static hosting
-
-The message page works on GitHub Pages or Netlify as a static site, but the supplied tracking API is designed for Vercel serverless functions. Without the API/environment setup, tracking fails silently and the message page continues to work.
-
-
-## Optional reaction after the final paragraph
-
-After she finishes reading, the page offers four optional responses:
-
-- I'm still hurt
-- I need more time
-- I forgive you
-- I read this. Take care.
-
-Her selection is **not sent immediately**. She must explicitly press **Send my response**.
-She can also leave the page without choosing or sending anything.
-
-If you already created the Supabase table using an older version of this project,
-run the newest `supabase-setup.sql` once so the `reaction` column and
-`response_sent` event are available.
+If you change it in `script.js`, change the default in `status.html` too.

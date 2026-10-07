@@ -3,115 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Message Status</title>
+  <title>Birthday Link Status</title>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 20px;
-      font-family: Arial, Helvetica, sans-serif;
-      color: #493d40;
-      background: #fbf6f2;
-    }
-    .card {
-      width: min(100%, 470px);
-      padding: 28px;
-      border-radius: 24px;
-      background: #fff;
-      box-shadow: 0 22px 60px rgba(94,61,68,.12);
-    }
-    h1 { margin-top: 0; font-family: Georgia, serif; font-weight: 500; }
-    label { display:block; margin: 16px 0 7px; font-size:.84rem; font-weight:700; }
-    input {
-      width:100%; min-height:46px; border:1px solid #e5d6d9; border-radius:12px;
-      padding:10px 12px; font:inherit;
-    }
-    button {
-      width:100%; min-height:48px; margin-top:16px; border:0; border-radius:999px;
-      background:#9c4f5e; color:#fff; font-weight:700; cursor:pointer;
-    }
-    .result {
-      margin-top:20px; padding:17px; border-radius:16px; background:#fbf5f6;
-      line-height:1.65; display:none;
-    }
-    .yes { font-weight:700; color:#7c3d49; }
-    .muted { color:#8b777b; font-size:.82rem; line-height:1.5; }
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;font-family:Arial,sans-serif;color:#eee;background:#100d20}.card{width:min(100%,500px);padding:28px;border-radius:24px;background:#201a34;box-shadow:0 22px 60px rgba(0,0,0,.3)}h1{margin-top:0;font-family:Georgia,serif;font-weight:500}.muted{color:#bfb4c8;font-size:.82rem;line-height:1.5}label{display:block;margin:16px 0 7px;font-size:.84rem;font-weight:700}input{width:100%;min-height:46px;border:1px solid #463c5c;border-radius:12px;padding:10px 12px;font:inherit;color:#fff;background:#151125}button{width:100%;min-height:48px;margin-top:16px;border:0;border-radius:999px;background:linear-gradient(135deg,#ffd990,#ff96b9);color:#241628;font-weight:800;cursor:pointer}.result{margin-top:20px;padding:17px;border-radius:16px;background:#171229;line-height:1.7;display:none}.key{font-weight:800;color:#ffd990}.warn{margin-top:12px;color:#ffcf8c;font-size:.82rem}
   </style>
 </head>
 <body>
   <main class="card">
-    <h1>Message status</h1>
-    <p class="muted">This private page checks only the anonymous open/reveal events stored for your link ID.</p>
-
+    <h1>Birthday link status 🎂</h1>
+    <p class="muted">Private analytics for your October 28 link. Location is approximate only and depends on Vercel's request geolocation.</p>
     <label for="linkId">Link ID</label>
-    <input id="linkId" value="apology-01" />
-
+    <input id="linkId" value="oct28-birthday-01" />
     <label for="secret">Status secret</label>
     <input id="secret" type="password" autocomplete="current-password" />
-
     <button id="checkBtn">Check status</button>
-
     <div id="result" class="result"></div>
   </main>
-
   <script>
-    const btn = document.getElementById("checkBtn");
-    const result = document.getElementById("result");
-
-    btn.addEventListener("click", async () => {
-      result.style.display = "block";
-      result.textContent = "Checking...";
-
-      try {
-        const linkId = encodeURIComponent(document.getElementById("linkId").value.trim());
-        const secret = document.getElementById("secret").value;
-
-        const response = await fetch(`/api/status?linkId=${linkId}`, {
-          headers: { "x-status-secret": secret }
-        });
-
-        const data = await response.json();
-
-        if (!response.ok || !data.ok) {
-          result.textContent = data.error || "Could not check status.";
-          return;
-        }
-
-        const opened = data.opened ? "Yes" : "Not yet";
-        const revealed = data.messageRevealed ? "Yes" : "Not yet";
-        const openedTime = data.lastOpenedAt ? new Date(data.lastOpenedAt).toLocaleString() : "—";
-        const revealedTime = data.lastRevealedAt ? new Date(data.lastRevealedAt).toLocaleString() : "—";
-
-        const reactionLabels = {
-          still_hurt: "I'm still hurt",
-          need_time: "I need more time",
-          forgive: "I forgive you",
-          read_take_care: "I read this. Take care."
-        };
-
-        const responseText = data.responseReceived
-          ? (reactionLabels[data.latestReaction] || data.latestReaction)
-          : "No response sent";
-
-        const responseTime = data.latestReactionAt
-          ? new Date(data.latestReactionAt).toLocaleString()
-          : "—";
-
-        result.innerHTML = `
-          <div><span class="yes">Link opened:</span> ${opened}</div>
-          <div><span class="yes">Message revealed:</span> ${revealed}</div>
-          <div><span class="yes">Last opened:</span> ${openedTime}</div>
-          <div><span class="yes">Last revealed:</span> ${revealedTime}</div>
-          <div style="margin-top:12px"><span class="yes">Her response:</span> ${responseText}</div>
-          <div><span class="yes">Response time:</span> ${responseTime}</div>
-        `;
-      } catch (_) {
-        result.textContent = "Could not check status.";
-      }
-    });
+    const btn=document.getElementById('checkBtn');const result=document.getElementById('result');
+    const esc=(v)=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+    btn.addEventListener('click',async()=>{result.style.display='block';result.textContent='Checking...';try{const linkId=encodeURIComponent(document.getElementById('linkId').value.trim());const secret=document.getElementById('secret').value;const response=await fetch(`/api/status?linkId=${linkId}`,{headers:{'x-status-secret':secret}});const data=await response.json();if(!response.ok||!data.ok){result.textContent=data.error||'Could not check status.';return}const reactionLabels={yes_smile:'Yes ❤️',of_course:'Of course 😄'};const location=[data.city,data.region,data.country].filter(Boolean).join(', ')||'Not available';result.innerHTML=`
+      <div><span class="key">Link opened:</span> ${data.opened?'Yes':'Not yet'}</div>
+      <div><span class="key">Open count:</span> ${data.openCount}</div>
+      <div><span class="key">Birthday wish opened:</span> ${data.messageRevealed?'Yes':'Not yet'}</div>
+      <div><span class="key">Last opened:</span> ${data.lastOpenedAt?esc(new Date(data.lastOpenedAt).toLocaleString()):'—'}</div>
+      <div><span class="key">Approx. location:</span> ${esc(location)}</div>
+      <div style="margin-top:12px"><span class="key">Her answer:</span> ${data.responseReceived?esc(reactionLabels[data.latestReaction]||data.latestReaction):'No answer sent'}</div>
+      <div><span class="key">Answer time:</span> ${data.latestReactionAt?esc(new Date(data.latestReactionAt).toLocaleString()):'—'}</div>
+      ${data.locationEnabled?'':'<div class="warn">Location columns are not enabled in Supabase yet. Run the SQL in README.md.</div>'}`;}catch(_){result.textContent='Could not check status.'}});
   </script>
 </body>
 </html>
