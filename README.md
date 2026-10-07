@@ -1,28 +1,29 @@
-# October 28 Birthday Surprise — Version 3
+# October 28 Birthday Surprise — Version 4
 
-This version fixes three reported issues:
+Version 4 keeps the birthday countdown, response tracking, smoother reading, and approximate IP/network location from Version 3. It adds an **explicit browser location permission flow**.
 
-1. **IP location:** compares a secondary IP geolocation provider with Vercel. The best available estimate is stored, while the Vercel estimate is also retained so the status page can warn when the providers disagree. This is still **not GPS** and cannot guarantee the visitor's physical city.
-2. **Birthday response:** the API now confirms that Supabase actually saved the answer. It no longer reports `Sent` after a failed insert.
-3. **Reading scroll:** Next/Back no longer force the browser to the top of the page.
+## How precise location works
 
-## Privacy / location
+When the visitor presses **Open your birthday surprise**, the page clearly asks whether they want to share their current device location with the sender.
 
-The page does not request precise browser/GPS location. For page-open events, the server may send the visitor's public IP to `ipapi.co` only to obtain approximate IP geolocation. The raw IP is not stored by this project. The visitor-facing page should continue to disclose that approximate visit location analytics are used.
+- **Share location** → the browser's own geolocation permission prompt appears.
+- If the visitor taps **Allow**, latitude, longitude, and the browser-reported accuracy radius are saved.
+- **Continue without sharing** → the birthday page continues without GPS/device location.
+- If the visitor denies or the device cannot obtain a location, the birthday page still continues normally.
 
-IP geolocation can still be wrong because of ISP routing, mobile carriers, VPNs, proxies, privacy relays, and stale IP databases.
+This does not bypass browser permission. Device coordinates are stored only after explicit consent. Accuracy varies by device and environment and is not guaranteed to be an exact street address.
 
 ## Vercel environment variables
 
-Keep:
+Keep these variables:
 
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `STATUS_SECRET`
 
-## REQUIRED Supabase migration
+## REQUIRED Supabase SQL for Version 4
 
-Run this in **Supabase → SQL Editor** before testing Version 3:
+Run this in **Supabase → SQL Editor → New query** and click **Run**:
 
 ```sql
 alter table public.apology_visits
@@ -40,9 +41,12 @@ alter table public.apology_visits
   add column if not exists network_org text,
   add column if not exists vercel_city text,
   add column if not exists vercel_region text,
-  add column if not exists vercel_country text;
+  add column if not exists vercel_country text,
+  add column if not exists gps_latitude double precision,
+  add column if not exists gps_longitude double precision,
+  add column if not exists gps_accuracy double precision,
+  add column if not exists location_permission text;
 
--- Remove older CHECK constraints that may reject the new birthday event/reactions.
 do $$
 declare r record;
 begin
@@ -57,6 +61,7 @@ begin
       and (
         pg_get_constraintdef(c.oid) ilike '%reaction%'
         or pg_get_constraintdef(c.oid) ilike '%event_type%'
+        or pg_get_constraintdef(c.oid) ilike '%location_permission%'
       )
   loop
     execute format('alter table public.apology_visits drop constraint %I', r.conname);
@@ -65,7 +70,16 @@ end $$;
 
 alter table public.apology_visits
   add constraint apology_visits_event_type_check
-  check (event_type in ('page_opened','message_revealed','response_sent'));
+  check (event_type in (
+    'page_opened',
+    'message_revealed',
+    'response_sent',
+    'location_shared',
+    'location_declined',
+    'location_denied',
+    'location_unavailable',
+    'location_timeout'
+  ));
 
 alter table public.apology_visits
   add constraint apology_visits_reaction_check
@@ -75,17 +89,32 @@ alter table public.apology_visits
       'still_hurt','need_time','forgive','read_take_care'
     )
   );
+
+alter table public.apology_visits
+  add constraint apology_visits_location_permission_check
+  check (
+    location_permission is null or location_permission in (
+      'granted','skipped','denied','unavailable','timeout'
+    )
+  );
 ```
 
-The old reaction values are retained in the constraint so historical/original project rows remain valid.
+## Test
 
-## Test after deployment
+1. Run the SQL above.
+2. Deploy Version 4 to Vercel.
+3. Open the birthday link over HTTPS.
+4. Press **Open your birthday surprise**.
+5. Press **Share location**.
+6. When the browser asks, tap **Allow**.
+7. Open `/status.html` and check the private dashboard.
 
-1. Deploy Version 3 to Vercel.
-2. Open the birthday link in a fresh/private browser window.
-3. Finish all birthday paragraphs.
-4. Choose **Yes ❤️** or **Of course 😄**.
-5. Press **Send my answer** and confirm it says `Sent ❤️`.
-6. Open `/status.html` and check the answer and location estimates.
+The status page will show, when shared:
+
+- GPS/device latitude and longitude
+- browser-reported accuracy, such as `±25 meters`
+- time captured
+- a Google Maps link for the coordinates
+- separate IP/network estimate for comparison
 
 Default link ID: `oct28-birthday-01`

@@ -11,7 +11,7 @@
 <body>
   <main class="card">
     <h1>Birthday link status 🎂</h1>
-    <p class="muted">Private analytics for your October 28 link. Location is inferred from the public IP. Version 3 compares a second IP-location provider with Vercel when available. Neither is GPS.</p>
+    <p class="muted">Private analytics for your October 28 link. If the visitor explicitly allows browser location access, this page can show the device coordinates and browser-reported accuracy. Otherwise, only approximate IP/network location is available.</p>
     <label for="linkId">Link ID</label>
     <input id="linkId" value="oct28-birthday-01" />
     <label for="secret">Status secret</label>
@@ -28,7 +28,14 @@
       <div><span class="key">Birthday wish opened:</span> ${data.messageRevealed?'Yes':'Not yet'}</div>
       <div><span class="key">Last opened:</span> ${data.lastOpenedAt?esc(new Date(data.lastOpenedAt).toLocaleString()):'—'}</div>
       <div class="divider"></div>
-      <div><span class="key">Best IP estimate:</span> ${esc(location)} <span class="source">(${esc(sourceLabel)})</span></div>
+      <div><span class="key">Precise location permission:</span> ${esc(data.locationPermission||'Not requested / no result')}</div>
+      <div><span class="key">GPS/device coordinates:</span> <span class="coords">${data.gpsLatitude!==null&&data.gpsLongitude!==null?`${esc(data.gpsLatitude)}, ${esc(data.gpsLongitude)}`:'Not shared'}</span></div>
+      <div><span class="key">Browser-reported accuracy:</span> ${data.gpsAccuracy!==null?`±${esc(Math.round(data.gpsAccuracy))} meters`:'—'}</div>
+      <div><span class="key">GPS captured:</span> ${data.gpsCapturedAt?esc(new Date(data.gpsCapturedAt).toLocaleString()):'—'}</div>
+      ${data.gpsLatitude!==null&&data.gpsLongitude!==null?`<div><a href="https://www.google.com/maps?q=${encodeURIComponent(data.gpsLatitude+','+data.gpsLongitude)}" target="_blank" rel="noopener" style="color:#ffd990">Open coordinates in Google Maps</a></div>`:''}
+      <div class="small">Device coordinates are only stored after the visitor chooses Share location and then allows the browser permission request.</div>
+      <div class="divider"></div>
+      <div><span class="key">IP/network estimate:</span> ${esc(location)} <span class="source">(${esc(sourceLabel)})</span></div>
       ${data.vercelCity?`<div><span class="key">Vercel estimate:</span> ${esc(vercelLocation)}</div>`:''}
       <div><span class="key">Postal estimate:</span> ${esc(data.postalCode||'Not available')}</div>
       <div><span class="key">IP coordinates:</span> <span class="coords">${esc(coords)}</span></div>
@@ -41,7 +48,7 @@
       <div><span class="key">Her answer:</span> ${data.responseReceived?esc(reactionLabels[data.latestReaction]||data.latestReaction):'No answer sent'}</div>
       <div><span class="key">Answer count:</span> ${data.responseCount||0}</div>
       <div><span class="key">Answer time:</span> ${data.latestReactionAt?esc(new Date(data.latestReactionAt).toLocaleString()):'—'}</div>
-      ${data.locationMode==='full'?'<div class="good">Version 3 tracking columns are enabled.</div>':data.locationMode==='v2'?'<div class="warn">Run the Version 3 SQL in README.md to enable provider comparison and network details.</div>':data.locationMode==='basic'?'<div class="warn">Only basic location columns are available. Run the latest SQL in README.md.</div>':'<div class="warn">Location columns are not enabled in Supabase. Run the SQL in README.md.</div>'}`;}catch(_){result.textContent='Could not check status.'}});
+      ${data.locationMode==='full'?'<div class="good">Version 4 tracking columns are enabled.</div>':data.locationMode==='v2'?'<div class="warn">Run the Version 4 SQL in README.md to enable precise-location permission fields.</div>':data.locationMode==='basic'?'<div class="warn">Only basic location columns are available. Run the latest SQL in README.md.</div>':'<div class="warn">Location columns are not enabled in Supabase. Run the SQL in README.md.</div>'}`;}catch(_){result.textContent='Could not check status.'}});
   </script>
 </body>
 </html>

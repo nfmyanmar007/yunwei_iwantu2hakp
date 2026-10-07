@@ -75,9 +75,20 @@
     </section>
 
     <p class="privacy-note">
-      This page records basic visit analytics, including an approximate IP-based city/region when available. A geolocation provider may process the public IP for this estimate. It does not request precise GPS location.
+      This page records basic visit analytics. If you choose <strong>Share location</strong>, your browser may also share your device location with the sender after asking for permission. You can continue without sharing it.
     </p>
   </main>
+
+  <div id="locationModal" class="location-modal" hidden aria-hidden="true">
+    <div class="location-dialog" role="dialog" aria-modal="true" aria-labelledby="locationTitle">
+      <div class="location-icon" aria-hidden="true">📍</div>
+      <h2 id="locationTitle">Share your location?</h2>
+      <p>This birthday page can share your current device location with the sender. Your browser will ask for permission first. You can continue without sharing.</p>
+      <button id="shareLocationButton" class="primary-button location-choice" type="button">Share location</button>
+      <button id="skipLocationButton" class="secondary-button location-choice" type="button">Continue without sharing</button>
+      <p id="locationStatus" class="location-status" aria-live="polite"></p>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>

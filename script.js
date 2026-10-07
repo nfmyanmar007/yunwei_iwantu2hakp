@@ -35,9 +35,14 @@ const reactionGrid = document.getElementById("reactionGrid");
 const sendResponseButton = document.getElementById("sendResponseButton");
 const reactionStatus = document.getElementById("reactionStatus");
 const confetti = document.getElementById("confetti");
+const locationModal = document.getElementById("locationModal");
+const shareLocationButton = document.getElementById("shareLocationButton");
+const skipLocationButton = document.getElementById("skipLocationButton");
+const locationStatus = document.getElementById("locationStatus");
 
 let currentStep = 0;
 let selectedReaction = null;
+let pendingOpen = false;
 
 function calendarDaysUntilBirthday() {
   const now = new Date();
@@ -50,7 +55,6 @@ function calendarDaysUntilBirthday() {
 function updateCountdown() {
   const days = calendarDaysUntilBirthday();
   greeting.textContent = config.herName ? `${config.herName} ✨` : "For you ✨";
-
   if (days > 1) {
     countdownNumber.textContent = days;
     countdownLabel.textContent = "days until your birthday 🎂";
@@ -103,14 +107,69 @@ function launchConfetti() {
   setTimeout(() => { confetti.innerHTML = ""; }, 5200);
 }
 
-readButton.addEventListener("click", () => {
+function openBirthdayMessage() {
+  locationModal.hidden = true;
+  locationModal.setAttribute("aria-hidden", "true");
   introView.hidden = true;
   messageView.hidden = false;
   currentStep = 0;
   renderStep();
   launchConfetti();
-  // Keep the reader at the current visual position instead of jumping to the top.
   if (config.enableVisitReceipt) recordEvent("message_revealed");
+}
+
+function showLocationChoice() {
+  pendingOpen = true;
+  locationStatus.textContent = "";
+  locationModal.hidden = false;
+  locationModal.setAttribute("aria-hidden", "false");
+}
+
+readButton.addEventListener("click", showLocationChoice);
+
+skipLocationButton.addEventListener("click", async () => {
+  if (!pendingOpen) return;
+  pendingOpen = false;
+  if (config.enableVisitReceipt) await recordEvent("location_declined");
+  openBirthdayMessage();
+});
+
+shareLocationButton.addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    locationStatus.textContent = "Location sharing is not supported by this browser.";
+    if (config.enableVisitReceipt) recordEvent("location_unavailable");
+    setTimeout(() => { pendingOpen = false; openBirthdayMessage(); }, 700);
+    return;
+  }
+
+  shareLocationButton.disabled = true;
+  skipLocationButton.disabled = true;
+  locationStatus.textContent = "Waiting for your browser permission…";
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      locationStatus.textContent = "Location shared. Thank you ❤️";
+      if (config.enableVisitReceipt) {
+        await recordEvent("location_shared", {
+          gpsLatitude: position.coords.latitude,
+          gpsLongitude: position.coords.longitude,
+          gpsAccuracy: position.coords.accuracy
+        });
+      }
+      pendingOpen = false;
+      setTimeout(openBirthdayMessage, 450);
+    },
+    async (error) => {
+      let eventType = "location_denied";
+      if (error && error.code === 2) eventType = "location_unavailable";
+      if (error && error.code === 3) eventType = "location_timeout";
+      locationStatus.textContent = "Location was not shared. You can still enjoy the birthday surprise.";
+      if (config.enableVisitReceipt) await recordEvent(eventType);
+      pendingOpen = false;
+      setTimeout(openBirthdayMessage, 650);
+    },
+    { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+  );
 });
 
 nextButton.addEventListener("click", () => {
@@ -164,25 +223,22 @@ sendResponseButton.addEventListener("click", async () => {
   }
 });
 
-
 function clientContext() {
   let browserTimezone = "";
   try { browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (_) {}
-  return {
-    browserTimezone,
-    browserLanguage: navigator.language || ""
-  };
+  return { browserTimezone, browserLanguage: navigator.language || "" };
 }
 
-async function recordEvent(eventType) {
+async function recordEvent(eventType, extra = {}) {
   try {
-    await fetch("/api/visit", {
+    const response = await fetch("/api/visit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ linkId: config.linkId, eventType, ...clientContext() }),
+      body: JSON.stringify({ linkId: config.linkId, eventType, ...clientContext(), ...extra }),
       keepalive: true
     });
-  } catch (_) {}
+    return response.ok;
+  } catch (_) { return false; }
 }
 
 if (config.myName) signature.textContent = `— ${config.myName}`;
